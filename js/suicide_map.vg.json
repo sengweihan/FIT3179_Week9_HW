@@ -1,0 +1,53 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": "SUICIDE CASES IN DIFFERENT COUNTRIES",
+    "width": 800,
+    "height": 500,
+    "projection": {"type": "equalEarth"},
+    "layer": [
+    { "data" : {
+      "url": "https://raw.githubusercontent.com/sengweihan/FIT3179_Week9_HW/main/data/ne_110m_admin_0_countries.json",
+      "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+    },
+      "mark": {"type": "geoshape", "fill": "lightgray", "stroke":"white"}
+    },
+    {  
+      "data": {
+      "url": "https://raw.githubusercontent.com/sengweihan/FIT3179_Week9_HW/main/data/ne_110m_admin_0_countries.json",
+      "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+      },  
+      "transform": [
+      {
+      "lookup": "properties.NAME",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/sengweihan/FIT3179_Week9_HW/main/data/cleaned_map_suicide.csv"
+        },
+        "key": "country",
+        "fields": ["suicides_no", "population"]
+      }
+    },
+    {"calculate": "datum.suicides_no /datum.population * 100000", "as": "Suicide cases per 100,000 population"}
+    ],
+    "mark": {"type": "geoshape", "stroke":"white"},
+    "encoding": {
+        "color": {
+          "field": "Suicide cases per 100,000 population",
+          "type": "quantitative",
+          "scale": {"type": "threshold",
+          "domain": [10, 100, 1000],
+          "range": ["#6baed6","#4292c6","#2171b5", "#08519c"]
+                  }
+        },
+        "tooltip": [
+          {"field": "properties.NAME", "type": "nominal", "title": "Country"},
+          {"field": "suicides_no", "type": "quantitative", "title":"Suicide cases"},
+          {"field": "population", "type": "quantitative", "title":"Population"},
+          {"field": "Suicide cases per 100,000 population", "type": "quantitative", "format": ".2f"}
+
+        ]
+      }
+    }
+    ]
+        
+}
